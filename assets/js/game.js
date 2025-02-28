@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let numbers = generateNumbers();
+    let numbers = [];
     let playerChoice = 1;
-    let leftIndex = 0, rightIndex = numbers.length - 1;
+    let leftIndex = 0, rightIndex = 0;
     let playerScores = { 1: 0, 2: 0 };
     let currentPlayer = 1;
     let waiting = false;
@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     window.startGame = function (player) {
+        numbers = generateNumbers();
         playerChoice = player;
         leftIndex = 0;
         rightIndex = numbers.length - 1;
@@ -67,7 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let box = document.createElement("div");
             box.classList.add("box");
             box.textContent = num;
-            box.dataset.index = index;
 
             if (index === leftIndex || index === rightIndex) {
                 box.addEventListener("click", () => handlePlayerMove(index));
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function handlePlayerMove(index) {
         if (waiting || (index !== leftIndex && index !== rightIndex)) return;
 
-        let selectedBox = document.querySelector(`.box[data-index='${index}']`);
+        let selectedBox = document.querySelectorAll(".box")[index];
         selectedBox.classList.add("disabled");
 
         playerScores[currentPlayer] += numbers[index];
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (index === leftIndex) leftIndex++;
         else rightIndex--;
 
-        updateClickableBoxes();
+        displayBoxes();
         updateScoreDisplay();
 
         currentPlayer = 3 - currentPlayer;
@@ -107,16 +107,16 @@ document.addEventListener("DOMContentLoaded", function () {
         let choice;
         if (playerChoice === 1) {
             let dp = computeDPTable(numbers);
-            choice = dp[leftIndex + 1]?.[rightIndex] ?? 0 <= dp[leftIndex]?.[rightIndex - 1] ?? 0
-                ? numbers[rightIndex]
-                : numbers[leftIndex];
+            let leftScore = dp[leftIndex + 1]?.[rightIndex] ?? 0;
+            let rightScore = dp[leftIndex]?.[rightIndex - 1] ?? 0;
+            choice = leftScore <= rightScore ? numbers[rightIndex] : numbers[leftIndex];
         } else {
             let preferredParity = oddEvenStrategy(numbers);
-            choice = leftIndex % 2 === preferredParity ? numbers[leftIndex] : numbers[rightIndex];
+            choice = (leftIndex % 2 === preferredParity) ? numbers[leftIndex] : numbers[rightIndex];
         }
 
-        let moveIndex = numbers.indexOf(choice);
-        let selectedBox = document.querySelector(`.box[data-index='${moveIndex}']`);
+        let moveIndex = (choice === numbers[leftIndex]) ? leftIndex : rightIndex;
+        let selectedBox = document.querySelectorAll(".box")[moveIndex];
         selectedBox.classList.add("disabled");
 
         playerScores[currentPlayer] += choice;
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (moveIndex === leftIndex) leftIndex++;
         else rightIndex--;
 
-        updateClickableBoxes();
+        displayBoxes();
         updateScoreDisplay();
 
         currentPlayer = 3 - currentPlayer;
