@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let playerScores = { 1: 0, 2: 0 };
     let currentPlayer = 1;
     let waiting = false;
+    let disabledIndices = []; // Track indices of boxes that have been clicked
 
     function generateNumbers() {
         let sequence = Array.from({ length: 14 }, (_, i) => i + 1);
@@ -38,11 +39,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return oddSum > evenSum ? 0 : 1;
     }
 
-
     window.startGame = function (player) {
-
-        console.log("Game started as Player", player);  // <-- Debugging Log
-
+        console.log("Game started as Player", player);
         numbers = generateNumbers();
         playerChoice = player;
         leftIndex = 0;
@@ -50,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
         playerScores = { 1: 0, 2: 0 };
         currentPlayer = 1;
         waiting = false;
+        disabledIndices = []; // Reset disabled indices when the game starts
 
         document.getElementById("result").innerHTML = "";
         document.getElementById("box-container").innerHTML = "";
@@ -67,11 +66,10 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("player1").addEventListener("click", function () {
         startGame(1);
     });
-    
+
     document.getElementById("player2").addEventListener("click", function () {
         startGame(2);
     });
-    
 
     function displayBoxes() {
         let container = document.getElementById("box-container");
@@ -81,8 +79,12 @@ document.addEventListener("DOMContentLoaded", function () {
             let box = document.createElement("div");
             box.classList.add("box");
             box.textContent = num;
-
-            if (index === leftIndex || index === rightIndex) {
+            
+            // If this box is disabled, add the class
+            if (disabledIndices.includes(index)) {
+                box.classList.add("disabled");
+            } else if (index === leftIndex || index === rightIndex) {
+                // Only add the click listener if it's not disabled
                 box.addEventListener("click", () => handlePlayerMove(index));
             }
 
@@ -95,6 +97,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function handlePlayerMove(index) {
         if (waiting || (index !== leftIndex && index !== rightIndex)) return;
 
+        // Mark the clicked box as disabled
+        disabledIndices.push(index);
         let selectedBox = document.querySelectorAll(".box")[index];
         selectedBox.classList.add("disabled");
 
@@ -129,6 +133,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         let moveIndex = (choice === numbers[leftIndex]) ? leftIndex : rightIndex;
+        disabledIndices.push(moveIndex); // Mark the computer's move as disabled
+
         let selectedBox = document.querySelectorAll(".box")[moveIndex];
         selectedBox.classList.add("disabled");
 
