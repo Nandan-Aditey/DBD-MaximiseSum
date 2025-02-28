@@ -4,118 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Optimal Strategy Game</title>
-    <link rel="stylesheet" href="/DBD-MaximiseSum/assets/js/css/style.css">
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
-            transition: background 1s;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        .container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .box {
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #3498db;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .box.disabled {
-            background-color: #95a5a6;
-            color: #2c3e50;
-            pointer-events: none;
-        }
-
-        .buttons {
-            margin-top: 20px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 5px;
-            cursor: pointer;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-
-        .btn:hover {
-            background-color: #27ae60;
-        }
-
-        #result {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        #confetti-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-            display: none;
-        }
-
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: gold;
-            animation: fall 2s linear infinite;
-        }
-
-        @keyframes fall {
-            from {
-                transform: translateY(-100px);
-            }
-            to {
-                transform: translateY(100vh);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/style.css">
+    <script src="assets/script.js"></script>
+    <script src="assets/js/game.js" defer></script>
 </head>
 <body>
+    <button id="eshowbtn" onclick="toggleExplanation()">〈 </button>
+    <div id="content">
+        <h1 id="title">Maximize the Sum</h1>
+        <div class="buttons">
+            <button class="btn" onclick="startGame(1)">Play as Player 1</button>
+            <button class="btn" onclick="startGame(2)">Play as Player 2</button>
+        </div>
 
-    <h1>Optimal Strategy Game</h1>
-    <div class="buttons">
-        <button id="player1">Play as Player 1</button>
-        <button id="player2">Play as Player 2</button>
+        <div class="container" id="box-container"></div>
+        <div id="result"></div>
+        <div id="confetti-container"></div>
     </div>
-
-    <div class="container" id="box-container"></div>
-    <div id="result"></div>
-    <div id="confetti-container"></div>
-
-    <script src="\DBD-MaximiseSum\assets\js\game.js" defer></script>
-    <script src="/DBD-MaximiseSum/assets/script.js" defer></script>
-
     <div id="explain">
         <div id="etitle">
             Explanation

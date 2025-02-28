@@ -60,8 +60,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
         displayBoxes();
 
+        addInfoMsg("The game has started.");
         if (playerChoice === 2) {
+            waiting = true;
             setTimeout(computerMove, 1000);
+            
+            // techincally, based on the existing organisation,
+            // we should do this in the backend
+            let os = 0, es = 0;
+            for (i = 0; i < numbers.length; i++) {
+                if ((i+1) % 2 == 0) es += numbers[i];
+                else os += numbers[i]; }
+            setTimeout(addComputerMsg, 500, "Since I am going first, I can use the <b>odd-even "+
+            "strategy</b>.<br><br>I see that the sum of the odd-indexed numbers is <b>" + os + "</b> while " +
+            "that of the even-indexed ones is <b>" + es + "</b>. So, I will try to pick the "+
+            (os > es ? "odd" : "even") + "-indexed numbers.");
+        } else {
+            setTimeout(addComputerMsg, 500, "Since I am going second, I must use <b>dynamic programming</b>"+
+                " to find my strategy.<br><br>I will calculate the DP table, which contains the maximum possible score"+
+                " for each portion of the board. Then, at each turn, I will pick the number which leaves you with" +
+                " the lesser maximum remaining score. This is the best strategy, even though I am "+
+                "not guaranteed to win.");
         }
     };
 
@@ -80,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
         numbers.forEach((num, index) => {
             let box = document.createElement("div");
             box.classList.add("box");
-            box.textContent = num;
+            box.innerHTML = num + "<div class=\"index\">" + (index+1) + "</div>";
             
             if (disabledIndices.includes(index)) {
                 box.classList.add("disabled");
@@ -110,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         displayBoxes();
         updateScoreDisplay();
-
+        addPlayerMsg("I pick "+numbers[index]+".");
         currentPlayer = 3 - currentPlayer;
         waiting = true;
 
@@ -133,21 +152,28 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (dp[leftIndex + 1][rightIndex] < dp[leftIndex][rightIndex - 1]) {
                 explanation = "Picking the leftmost number leaves you with a maximum remaining score of " 
                     + dp[leftIndex + 1][rightIndex] + " while the rightmost one leaves you with " 
-                    + dp[leftIndex][rightIndex - 1] + ". So, I pick the leftmost number (" + numbers[leftIndex] + ").";
+                    + dp[leftIndex][rightIndex - 1] + ".<br><br> So, I pick the <b>leftmost</b> number (" + numbers[leftIndex] + ").";
                 choice = numbers[leftIndex];
             } else if (dp[leftIndex + 1][rightIndex] > dp[leftIndex][rightIndex - 1]) {
                 explanation = "Picking the leftmost number leaves you with a maximum remaining score of " 
                     + dp[leftIndex + 1][rightIndex] + " while the rightmost one leaves you with " 
-                    + dp[leftIndex][rightIndex - 1] + ". So, I pick the rightmost number (" + numbers[rightIndex] + ").";
+                    + dp[leftIndex][rightIndex - 1] + ".<br><br> So, I pick the <b>rightmost</b> number (" + numbers[rightIndex] + ").";
                 choice = numbers[rightIndex];
             } else {
                 explanation = "Picking either the leftmost or rightmost number leaves you with a maximum remaining score of " 
-                    + dp[leftIndex + 1][rightIndex] + ". So, I pick the leftmost number (" + numbers[leftIndex] + ").";
+                    + dp[leftIndex + 1][rightIndex] + ".<br><br> So, I pick the <b>leftmost</b> number (" + numbers[leftIndex] + ").";
                 choice = numbers[leftIndex];
             }
         } else {
             let preferredParity = oddEvenStrategy(numbers);
-            choice = (leftIndex % 2 === preferredParity) ? numbers[leftIndex] : numbers[rightIndex];
+            let parity = preferredParity === 0 ? "odd" : "even";
+            if (leftIndex % 2 === preferredParity) {
+                explanation = "I pick the leftmost number (" + numbers[leftIndex] + "), since it is "+parity+"-indexed.";
+                choice = numbers[leftIndex];
+            } else {
+                explanation = "I pick the rightmost number (" + numbers[rightIndex] + "), since it is "+parity+"-indexed.";
+                choice = numbers[rightIndex];
+            }
         }
 
         let moveIndex = (choice === numbers[leftIndex]) ? leftIndex : rightIndex;
@@ -163,6 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         displayBoxes();
         updateScoreDisplay();
+        addComputerMsg(explanation);
 
         currentPlayer = 3 - currentPlayer;
         waiting = false;
@@ -187,6 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
             playerScores[2] > playerScores[1] ? "Player 2 Wins!" :
             "It's a Tie!";
 
+        addInfoMsg("The game is over. " + winnerText + "<br><br>");
         document.getElementById("box-container").innerHTML = "";
         document.getElementById("result").innerHTML = `
             <h2>Game Over</h2>
@@ -200,6 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             document.body.style.background = "#333";
             document.getElementById("result").style.color = "white";
+            document.getElementById("title").style.color = "white";
         }
     }
 
@@ -226,28 +255,5 @@ document.addEventListener("DOMContentLoaded", function () {
     function getRandomColor() {
         let colors = ["gold", "red", "blue", "green", "purple", "pink", "orange"];
         return colors[Math.floor(Math.random() * colors.length)];
-    }
-
-    function addComputerMsg(msg) {
-        let txt = "<div class=\"emsg cmsg\">" + msg + "</div>";
-        console.log(txt);
-        let e = document.getElementById("explainc");
-        e.insertAdjacentHTML('beforeend', txt);
-        e.lastElementChild.scrollIntoView();
-    }
-    
-    function addPlayerMsg(msg) {
-        let txt = "<div class=\"emsg ymsg\">" + msg + "</div>";
-        console.log(txt);
-        let e = document.getElementById("explainc");
-        e.insertAdjacentHTML('beforeend', txt);
-        e.lastElementChild.scrollIntoView();
-    }
-    
-    function addInfoMsg(msg) {
-        let txt = "<div class=\"einfo\">" + msg + "</div>";
-        let e = document.getElementById("explainc");
-        e.insertAdjacentHTML('beforeend', txt);
-        e.lastElementChild.scrollIntoView();
     }
 });
