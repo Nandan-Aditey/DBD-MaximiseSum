@@ -1,0 +1,4 @@
+include:
+  - assets/js/game.js
+  - assets/script.js
+  - assets/css/styles.css
