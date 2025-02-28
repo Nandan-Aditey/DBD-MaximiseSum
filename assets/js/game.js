@@ -122,11 +122,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function computerMove() {
         let choice;
+        let dp = computeDPTable(numbers);
         if (playerChoice === 1) {
-            let dp = computeDPTable(numbers);
-            let leftScore = dp[leftIndex + 1]?.[rightIndex] ?? 0;
-            let rightScore = dp[leftIndex]?.[rightIndex - 1] ?? 0;
-            choice = leftScore <= rightScore ? numbers[rightIndex] : numbers[leftIndex];
+            let explanation = "";
+            
+            if (leftIndex === rightIndex) {
+                explanation = "Since there is only one number (" + numbers[leftIndex] + ") left, I must pick it.";
+                choice = numbers[leftIndex];
+            } else if (dp[leftIndex + 1][rightIndex] < dp[leftIndex][rightIndex - 1]) {
+                explanation = "Picking the leftmost number leaves you with a maximum remaining score of " 
+                    + dp[leftIndex + 1][rightIndex] + " while the rightmost one leaves you with " 
+                    + dp[leftIndex][rightIndex - 1] + ". So, I pick the leftmost number (" + numbers[leftIndex] + ").";
+                choice = numbers[leftIndex];
+            } else if (dp[leftIndex + 1][rightIndex] > dp[leftIndex][rightIndex - 1]) {
+                explanation = "Picking the leftmost number leaves you with a maximum remaining score of " 
+                    + dp[leftIndex + 1][rightIndex] + " while the rightmost one leaves you with " 
+                    + dp[leftIndex][rightIndex - 1] + ". So, I pick the rightmost number (" + numbers[rightIndex] + ").";
+                choice = numbers[rightIndex];
+            } else {
+                explanation = "Picking either the leftmost or rightmost number leaves you with a maximum remaining score of " 
+                    + dp[leftIndex + 1][rightIndex] + ". So, I pick the leftmost number (" + numbers[leftIndex] + ").";
+                choice = numbers[leftIndex];
+            }
         } else {
             let preferredParity = oddEvenStrategy(numbers);
             choice = (leftIndex % 2 === preferredParity) ? numbers[leftIndex] : numbers[rightIndex];
@@ -145,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         displayBoxes();
         updateScoreDisplay();
+        addComputerMsg(explanation); // Optionally display the explanation.
 
         currentPlayer = 3 - currentPlayer;
         waiting = false;
