@@ -23,11 +23,12 @@ h1 {
     display: flex;
     justify-content: center;
     gap: 10px;
+    padding-left: 2em;
 }
 
 .box {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -107,6 +108,7 @@ h1 {
     display: none;
     flex-direction: column;
     border-left: 1px solid gray;
+    margin-left: 2em;
 }
 
 #explainc {
