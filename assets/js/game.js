@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPlayer = 1;
     let waiting = false;
     let disabledIndices = [];
+    let disabledPIndices = [];
 
     function generateNumbers() {
         let sequence = Array.from({ length: 14 }, (_, i) => i + 1);
@@ -51,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
         currentPlayer = 1;
         waiting = false;
         disabledIndices = [];
+        disabledPIndices = [];
 
         document.getElementById("result").innerHTML = "";
         document.getElementById("box-container").innerHTML = "";
@@ -102,9 +104,12 @@ document.addEventListener("DOMContentLoaded", function () {
             box.innerHTML = num + "<div class=\"index\">" + (index+1) + "</div>";
             
             if (disabledIndices.includes(index)) {
+
                 box.classList.add("disabled");
             } else if (index === leftIndex || index === rightIndex) {
                 box.addEventListener("click", () => handlePlayerMove(index));
+            } else if (disabledPIndices.includes(index)) {
+                box.classList.add("disabledp");
             }
 
             container.appendChild(box);
@@ -118,9 +123,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (waiting || (index !== leftIndex && index !== rightIndex)) return;
 
         // Mark the clicked box as disabled
-        disabledIndices.push(index);
+        disabledPIndices.push(index);
         let selectedBox = document.querySelectorAll(".box")[index];
-        selectedBox.classList.add("disabled");
+        console.log("a");
+        selectedBox.classList.add("disabledp");
 
         playerScores[currentPlayer] += numbers[index];
 
