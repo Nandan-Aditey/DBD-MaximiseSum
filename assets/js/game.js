@@ -38,7 +38,11 @@ document.addEventListener("DOMContentLoaded", function () {
         return oddSum > evenSum ? 0 : 1;
     }
 
+
     window.startGame = function (player) {
+
+        console.log("Game started as Player", player);  // <-- Debugging Log
+
         numbers = generateNumbers();
         playerChoice = player;
         leftIndex = 0;
@@ -59,6 +63,15 @@ document.addEventListener("DOMContentLoaded", function () {
             setTimeout(computerMove, 1000);
         }
     };
+
+    document.getElementById("player1").addEventListener("click", function () {
+        startGame(1);
+    });
+    
+    document.getElementById("player2").addEventListener("click", function () {
+        startGame(2);
+    });
+    
 
     function displayBoxes() {
         let container = document.getElementById("box-container");
