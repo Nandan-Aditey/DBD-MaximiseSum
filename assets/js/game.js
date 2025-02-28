@@ -227,4 +227,27 @@ document.addEventListener("DOMContentLoaded", function () {
         let colors = ["gold", "red", "blue", "green", "purple", "pink", "orange"];
         return colors[Math.floor(Math.random() * colors.length)];
     }
+
+    function addComputerMsg(msg) {
+        let txt = "<div class=\"emsg cmsg\">" + msg + "</div>";
+        console.log(txt);
+        let e = document.getElementById("explainc");
+        e.insertAdjacentHTML('beforeend', txt);
+        e.lastElementChild.scrollIntoView();
+    }
+    
+    function addPlayerMsg(msg) {
+        let txt = "<div class=\"emsg ymsg\">" + msg + "</div>";
+        console.log(txt);
+        let e = document.getElementById("explainc");
+        e.insertAdjacentHTML('beforeend', txt);
+        e.lastElementChild.scrollIntoView();
+    }
+    
+    function addInfoMsg(msg) {
+        let txt = "<div class=\"einfo\">" + msg + "</div>";
+        let e = document.getElementById("explainc");
+        e.insertAdjacentHTML('beforeend', txt);
+        e.lastElementChild.scrollIntoView();
+    }
 });

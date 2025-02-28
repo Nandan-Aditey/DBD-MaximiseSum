@@ -161,31 +161,3 @@ function showFinalResult() {
         document.getElementById("title").style.color = "white";
     }
 }
-
-function addComputerMsg(msg) {
-    let txt = `<div class="emsg cmsg">${msg}</div>`;
-    let e = document.getElementById("explainc");
-    e.insertAdjacentHTML('beforeend', txt);
-    e.lastElementChild.scrollIntoView();
-}
-
-function addPlayerMsg(msg) {
-    let txt = `<div class="emsg ymsg">${msg}</div>`;
-    let e = document.getElementById("explainc");
-    e.insertAdjacentHTML('beforeend', txt);
-    e.lastElementChild.scrollIntoView();
-}
-
-function addInfoMsg(msg) {
-    let txt = `<div class="einfo">${msg}</div>`;
-    let e = document.getElementById("explainc");
-    e.insertAdjacentHTML('beforeend', txt);
-    e.lastElementChild.scrollIntoView();
-}
-
-function toggleExplanation() {
-    let x = document.getElementById("explain");
-    let y = document.getElementById("eshowbtn");
-    x.style.display = (x.style.display === "none" || x.style.display === "") ? "flex" : "none";
-    y.style.display = (y.style.display === "none") ? "block" : "none";
-}
