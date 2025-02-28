@@ -5,9 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let playerScores = { 1: 0, 2: 0 };
     let currentPlayer = 1;
     let waiting = false;
-    let disabledIndices = []; // Tracks indices that have been clicked
+    let disabledIndices = [];
 
-    // Generates a shuffled array of numbers 1..14
     function generateNumbers() {
         let sequence = Array.from({ length: 14 }, (_, i) => i + 1);
         for (let i = sequence.length - 1; i > 0; i--) {
@@ -17,17 +16,14 @@ document.addEventListener("DOMContentLoaded", function () {
         return sequence;
     }
 
-    // Compute the DP table where dp[i][j] is the maximum score the current player can secure
     function computeDPTable(numbers) {
         let n = numbers.length;
         let dp = Array.from({ length: n }, () => Array(n).fill(0));
 
-        // Base case: only one number available
         for (let i = 0; i < n; i++) {
             dp[i][i] = numbers[i];
         }
 
-        // Fill DP table for subarrays of length 2 to n
         for (let length = 2; length <= n; length++) {
             for (let i = 0; i <= n - length; i++) {
                 let j = i + length - 1;
@@ -39,14 +35,12 @@ document.addEventListener("DOMContentLoaded", function () {
         return dp;
     }
 
-    // Determine strategy based on odd-even sums
     function oddEvenStrategy(numbers) {
         let oddSum = numbers.filter((_, i) => i % 2 === 0).reduce((a, b) => a + b, 0);
         let evenSum = numbers.filter((_, i) => i % 2 === 1).reduce((a, b) => a + b, 0);
         return oddSum > evenSum ? 0 : 1;
     }
 
-    // Start a new game
     window.startGame = function (player) {
         console.log("Game started as Player", player);
         numbers = generateNumbers();
@@ -56,9 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
         playerScores = { 1: 0, 2: 0 };
         currentPlayer = 1;
         waiting = false;
-        disabledIndices = []; // Reset disabled state
+        disabledIndices = [];
 
-        // Reset UI elements
         document.getElementById("result").innerHTML = "";
         document.getElementById("box-container").innerHTML = "";
         document.getElementById("confetti-container").style.display = "none";
@@ -67,13 +60,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         displayBoxes();
 
-        // If computer is Player 2, make the first move after 1 second
         if (playerChoice === 2) {
             setTimeout(computerMove, 1000);
         }
     };
 
-    // Attach event listeners for the buttons
     document.getElementById("player1").addEventListener("click", function () {
         startGame(1);
     });
@@ -82,7 +73,6 @@ document.addEventListener("DOMContentLoaded", function () {
         startGame(2);
     });
 
-    // Render the boxes based on the current state
     function displayBoxes() {
         let container = document.getElementById("box-container");
         container.innerHTML = "";
@@ -92,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
             box.classList.add("box");
             box.textContent = num;
             
-            // If this box has been disabled, add the class; otherwise, if it's at an end, allow clicking
             if (disabledIndices.includes(index)) {
                 box.classList.add("disabled");
             } else if (index === leftIndex || index === rightIndex) {
@@ -116,7 +105,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         playerScores[currentPlayer] += numbers[index];
 
-        // Update boundaries
         if (index === leftIndex) leftIndex++;
         else rightIndex--;
 
@@ -133,7 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Computer's move: uses DP strategy if playerChoice===1, else uses odd-even strategy
     function computerMove() {
         let choice;
         let dp = computeDPTable(numbers);
@@ -158,15 +145,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     + dp[leftIndex + 1][rightIndex] + ". So, I pick the leftmost number (" + numbers[leftIndex] + ").";
                 choice = numbers[leftIndex];
             }
-            // Optionally display the explanation (ensure addComputerMsg is defined)
-            addComputerMsg(explanation);
         } else {
             let preferredParity = oddEvenStrategy(numbers);
             choice = (leftIndex % 2 === preferredParity) ? numbers[leftIndex] : numbers[rightIndex];
         }
 
         let moveIndex = (choice === numbers[leftIndex]) ? leftIndex : rightIndex;
-        disabledIndices.push(moveIndex); // Mark the computer's move as disabled
+        disabledIndices.push(moveIndex);
 
         let selectedBox = document.querySelectorAll(".box")[moveIndex];
         selectedBox.classList.add("disabled");
@@ -196,7 +181,6 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     }
 
-    // Display the final result
     function showFinalResult() {
         let winnerText =
             playerScores[1] > playerScores[2] ? "Player 1 Wins!" :
@@ -239,7 +223,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 3000);
     }
 
-    // Return a random color from a set of choices
     function getRandomColor() {
         let colors = ["gold", "red", "blue", "green", "purple", "pink", "orange"];
         return colors[Math.floor(Math.random() * colors.length)];
